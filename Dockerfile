@@ -6,18 +6,17 @@
 
 FROM ubuntu:20.04
 
-RUN apt-get update
-RUN apt-get install -y git
+RUN apt-get update && apt-get install -y git
 
 RUN mkdir /build
 WORKDIR /build
 
-RUN git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD
-WORKDIR /build/OpenROAD
-RUN ./etc/DependencyInstaller.sh -dev
-RUN ./etc/Build.sh
+RUN git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD && \
+    cd /build/OpenROAD && \
+    ./etc/DependencyInstaller.sh -dev && \
+    ./etc/Build.sh && \
+    cd build && make install && \
+    cd / && rm -rf /build
 
-WORKDIR /build/OpenROAD/build
-RUN make install
-
+WORKDIR /
 ENTRYPOINT ["openroad"]
